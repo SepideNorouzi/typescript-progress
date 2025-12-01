@@ -53,8 +53,11 @@ abstract class TodoRepository implements ITodo {
 
 //   controller will inherit from the abstract and override the methods.
 class TodoController extends TodoRepository {
+  protected static self: TodoController;
+  protected static latestId: number;
   constructor() {
     super();
+    TodoController.self = this;
   }
   public createTodo(todo: createTodoDTO): Response {
     const id = this.todos.length + 1;
@@ -64,6 +67,7 @@ class TodoController extends TodoRepository {
       state: todo.state,
     };
     this.todos.push(newTodo);
+    TodoController.setLatestId(id);
     return { message: "created" };
   }
   //   override the method: changed void to response.
@@ -80,6 +84,15 @@ class TodoController extends TodoRepository {
     this.todos = newtodos;
     return { message: "Todo removed" };
   }
+  public static getLatestId(): number {
+    return TodoController.latestId;
+  }
+  public static setLatestId(id: number): number {
+    return (TodoController.latestId = id);
+  }
+  public static numberOfTodos(): number {
+    return TodoController.self.todos.length;
+  }
 }
 // difference between implements and extends =>
 // implements : you must call and write all the methods from the parent in
@@ -94,3 +107,6 @@ console.log(todo.getList());
 console.log(todo.getById(2));
 console.log(todo.delete(2));
 console.log(todo.getList());
+
+console.log(TodoController.getLatestId());
+console.log(TodoController.numberOfTodos());
