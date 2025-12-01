@@ -1,7 +1,7 @@
 // An enum is like a traffic light.
 // It tells you that only specific words are allowed
-enum state {
-  QUEUE = "queue",
+enum STATE {
+  START = "start",
   DONE = "done",
   CANCEL = "cancel",
   TOP_LIST = "top-list",
@@ -12,17 +12,19 @@ enum state {
 type Todo = {
   id: number;
   title: string;
-  state: state;
+  state: STATE;
 };
 
 type createTodoDTO = {
   title: string;
-  state: state;
+  state: STATE;
 };
 // DTO : data transfer object : transfers the data based on a certain type.
 // imagine the createTodo in the interface is used to transfer data from FE to BE.
 // DTOs are like tiny mail packages you send to the backend
-
+type Response = {
+  message: string;
+};
 // use interfaces to define the general type of the classes and implementing them.
 // “the class MUST do these things.”
 // It doesn’t explain how to do them.Just that you must do them.
@@ -54,16 +56,26 @@ class TodoController extends TodoRepository {
   constructor() {
     super();
   }
-  public createTodo(todo: createTodoDTO): any {
-    return { newTodo: "created" };
+  public createTodo(todo: createTodoDTO): Response {
+    const id = this.todos.length + 1;
+    const newTodo: Todo = {
+      id,
+      title: todo.title,
+      state: todo.state,
+    };
+    this.todos.push(newTodo);
+    return { message: "created" };
   }
-  //   override the method: changed void to any.
+  //   override the method: changed void to response.
+  public getList(): Todo[] {
+    return this.todos;
+  }
 }
 // difference between implements and extends =>
 // implements : you must call and write all the methods from the parent in
 // your class.
 // extends : gives you free will to use the methods or do not.
 
-console.log(
-  new TodoController().createTodo({ title: "study", state: state.DONE })
-);
+const todo = new TodoController();
+console.log(todo.createTodo({ title: "study", state: STATE.DONE }));
+console.log(todo.getList());
