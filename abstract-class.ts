@@ -70,6 +70,16 @@ class TodoController extends TodoRepository {
   public getList(): Todo[] {
     return this.todos;
   }
+  public getById(id: number): Todo | Response {
+    const todo = this.todos.find((todo) => todo.id == id);
+    if (todo) return todo;
+    return { message: "todo not found" };
+  }
+  public delete(id: number): Response {
+    const newtodos = this.todos.filter((todo) => todo.id !== id);
+    this.todos = newtodos;
+    return { message: "Todo removed" };
+  }
 }
 // difference between implements and extends =>
 // implements : you must call and write all the methods from the parent in
@@ -78,4 +88,9 @@ class TodoController extends TodoRepository {
 
 const todo = new TodoController();
 console.log(todo.createTodo({ title: "study", state: STATE.DONE }));
+console.log(todo.createTodo({ title: "Ts course", state: STATE.TOP_LIST }));
+console.log(todo.createTodo({ title: "Ds study", state: STATE.START }));
+console.log(todo.getList());
+console.log(todo.getById(2));
+console.log(todo.delete(2));
 console.log(todo.getList());
