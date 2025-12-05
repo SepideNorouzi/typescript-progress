@@ -54,10 +54,11 @@ abstract class TodoRepository implements ITodo {
 //   controller will inherit from the abstract and override the methods.
 class TodoController extends TodoRepository {
   protected static self: TodoController;
-  protected static latestId: number;
+  protected _latestId: number;
   constructor() {
     super();
     TodoController.self = this;
+    this._latestId = this.todos.length;
   }
   public createTodo(todo: createTodoDTO): Response {
     const id = this.todos.length + 1;
@@ -67,7 +68,7 @@ class TodoController extends TodoRepository {
       state: todo.state,
     };
     this.todos.push(newTodo);
-    TodoController.setLatestId(id);
+    this._latestId = id;
     return { message: "created" };
   }
   //   override the method: changed void to response.
@@ -84,12 +85,16 @@ class TodoController extends TodoRepository {
     this.todos = newtodos;
     return { message: "Todo removed" };
   }
-  public static getLatestId(): number {
-    return TodoController.latestId;
+  get LatestId(): number {
+    if (this._latestId) return this._latestId;
+    else return 0;
   }
-  public static setLatestId(id: number): number {
-    return (TodoController.latestId = id);
+  set LatestId(value: number) {
+    if (typeof value === "number" && value > 0 && value >= this.todos.length) {
+      this._latestId = value;
+    } else console.log("invalid value!");
   }
+
   public static numberOfTodos(): number {
     return TodoController.self.todos.length;
   }
@@ -105,8 +110,14 @@ console.log(todo.createTodo({ title: "Ts course", state: STATE.TOP_LIST }));
 console.log(todo.createTodo({ title: "Ds study", state: STATE.START }));
 console.log(todo.getList());
 console.log(todo.getById(2));
-console.log(todo.delete(2));
+// console.log(todo.delete(2));
 console.log(todo.getList());
 
-console.log(TodoController.getLatestId());
+console.log((todo.LatestId = 5));
+console.log((todo.LatestId));
+
 console.log(TodoController.numberOfTodos());
+
+// _latestId is protected in the class and we dont wanna allow access from the
+// ouside and avoid changes, therefore we can use setter and getter to change
+// or access the value
