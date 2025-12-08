@@ -55,10 +55,12 @@ abstract class TodoRepository implements ITodo {
 class TodoController extends TodoRepository {
   protected static self: TodoController;
   protected _latestId: number;
+  public readonly myClassName: string;
   constructor() {
     super();
     TodoController.self = this;
     this._latestId = this.todos.length;
+    this.myClassName = "controller";
   }
   public createTodo(todo: createTodoDTO): Response {
     const id = this.todos.length + 1;
@@ -114,7 +116,7 @@ console.log(todo.getById(2));
 console.log(todo.getList());
 
 console.log((todo.LatestId = 5));
-console.log((todo.LatestId));
+console.log(todo.LatestId);
 
 console.log(TodoController.numberOfTodos());
 
